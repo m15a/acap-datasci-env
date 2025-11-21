@@ -1,0 +1,115 @@
+name: acap-datasci-env
+
+services:
+  git:
+    build:
+      context: ./git
+    volumes:
+      - git-data:/var/www/git
+    ports:
+      - "9010:9010"
+    restart: always
+
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+    volumes:
+      - minio-data:/data
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: minio123
+    command: minio server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    restart: always
+    healthcheck:
+      test: [CMD, mc, ready, local]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:15.15-alpine3.22
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init-dbs.sql:/docker-entrypoint-initdb.d/init-dbs.sql
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    restart: always
+    healthcheck:
+      test: [CMD, pg_isready, -U, prefect]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mlflow:
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    build:
+      context: ./mlflow
+    environment:
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      MLFLOW_S3_IGNORE_TLS: "true"
+      AWS_ACCESS_KEY_ID: minio
+      AWS_SECRET_ACCESS_KEY: minio123
+      AWS_DEFAULT_REGION: us-east-1
+    command: >
+      mlflow server --host 0.0.0.0
+      --backend-store-uri postgresql://mlflow:mlflow@postgres:5432/mlflow
+      --artifacts-destination s3://mlflow/artifacts
+      --disable-security-middleware
+    ports:
+      - "5001:5000"
+    restart: always
+
+  prefect-server:
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: prefecthq/prefect:3.6.4-python3.13
+    environment:
+      PREFECT_API_DATABASE_CONNECTION_URL: postgresql+asyncpg://prefect:prefect@postgres:5432/prefect
+      PREFECT_SERVER_ANALYTICS_ENABLED: false
+    command: prefect server start --host 0.0.0.0
+    ports:
+      - "4200:4200"
+    restart: always
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request;urllib.request.urlopen('http://localhost:4200/health')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  prefect-worker:
+    depends_on:
+      prefect-server:
+        condition: service_healthy
+    build:
+      context: ./prefect/worker
+    environment:
+      PREFECT_API_URL: http://prefect-server:4200/api
+      AWS_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: minio
+      AWS_SECRET_ACCESS_KEY: minio123
+      AWS_DEFAULT_REGION: us-east-1
+    command: prefect worker start --type process --pool sandbox
+    restart: always
+
+  marimo:
+    build:
+      context: ./marimo
+    ports:
+      - "2718:2718"
+    volumes:
+      - ..:/work
+    environment:
+      LANG: C.UTF-8
+
+volumes:
+  git-data:
+  minio-data:
+  postgres-data:

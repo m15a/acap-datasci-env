@@ -1,0 +1,50 @@
+[project]
+name = "acap-datasci-env"
+version = "0.1.0"
+description = "As-Cloud-as-Possible data science environment"
+requires-python = ">=3.13"
+dependencies = [
+    "duckdb>=1.4.2",
+    "mlflow>=3.6.0",
+    "numpy>=2.3.5",
+    "pandas[pyarrow]>=2.3.3",
+    "prefect[aws]>=3.6.4,<4",
+    "s3fs>=2025.10.0",
+    "scikit-learn>=1.7.2",
+    "scipy>=1.16.3",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.18.2",
+    "pandas-stubs>=2.3.2.250926",
+    "scikit-learn-stubs>=0.0.3",
+]
+marimo = [
+    "marimo[recommended,lsp]>=0.18.0",
+]
+
+[tool.ruff.lint]
+select = [
+    "B",
+    "E",
+    "D",
+    "F",
+    "I",
+    "Q",
+    "UP",
+    "W",
+]
+ignore = [
+    "D107",
+    "E741",
+]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"tests/*.py" = [
+    "D",
+    "S101",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
