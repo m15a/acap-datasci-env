@@ -38,7 +38,7 @@ graph TD
         host -->|Code| git -->|Code| prefect_worker
         host -->|Web UI / CLI| prefect_server
         host -->|Web UI| mlflow
-        host -->|Web UI / CLI| minio
+        %%host -->|Web UI / CLI| minio
         host <-->|Data| minio
 
         prefect_server -.-|Backend| postgres
