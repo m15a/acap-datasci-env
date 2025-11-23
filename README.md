@@ -166,6 +166,12 @@ $ prefect deployment run example/experiment
 - **View Results**: Once complete, examine the logged metrics and
   models at the MLflow Web UI: <http://localhost:5001>.
 
+## Appendix
+
+### Where is the notebook server?
+
+<http://localhost:2718>
+
 [marimo]: https://marimo.io/
 [mc]: https://github.com/minio/mc
 [minio]: https://www.min.io/
