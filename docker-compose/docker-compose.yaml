@@ -10,23 +10,17 @@ services:
       - "9010:9010"
     restart: always
 
-  minio:
-    image: quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z
+  versitygw:
+    image: versity/versitygw:v1.0.19
     volumes:
-      - minio-data:/data
+      - versitygw-data:/data
     environment:
-      MINIO_ROOT_USER: minio
-      MINIO_ROOT_PASSWORD: minio123
-    command: minio server /data --console-address ":9001"
+      ROOT_ACCESS_KEY: versitygw
+      ROOT_SECRET_KEY: versitygw
+    command: posix /data
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "7070:7070"
     restart: always
-    healthcheck:
-      test: [CMD, mc, ready, local]
-      interval: 5s
-      timeout: 5s
-      retries: 5
 
   postgres:
     image: postgres:15.15-alpine3.22
@@ -47,15 +41,15 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      minio:
-        condition: service_healthy
+      versitygw:
+        condition: service_started
     build:
       context: ./mlflow
     environment:
-      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      MLFLOW_S3_ENDPOINT_URL: http://versitygw:7070
       MLFLOW_S3_IGNORE_TLS: "true"
-      AWS_ACCESS_KEY_ID: minio
-      AWS_SECRET_ACCESS_KEY: minio123
+      AWS_ACCESS_KEY_ID: versitygw
+      AWS_SECRET_ACCESS_KEY: versitygw
       AWS_DEFAULT_REGION: us-east-1
     command: >
       mlflow server --host 0.0.0.0
@@ -92,9 +86,9 @@ services:
       context: ./prefect/worker
     environment:
       PREFECT_API_URL: http://prefect-server:4200/api
-      AWS_ENDPOINT_URL: http://minio:9000
-      AWS_ACCESS_KEY_ID: minio
-      AWS_SECRET_ACCESS_KEY: minio123
+      AWS_ENDPOINT_URL: http://versitygw:7070
+      AWS_ACCESS_KEY_ID: versitygw
+      AWS_SECRET_ACCESS_KEY: versitygw
       AWS_DEFAULT_REGION: us-east-1
     command: prefect worker start --type process --pool sandbox
     restart: always
@@ -111,5 +105,5 @@ services:
 
 volumes:
   git-data:
-  minio-data:
+  versitygw-data:
   postgres-data:

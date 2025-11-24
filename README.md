@@ -9,7 +9,7 @@
 This repository provides a local Docker Compose environment that
 simulates a cloud-native data science stack. It allows you to:
 
-- **Store data**: Object storage using [MinIO] (S3 compatible).
+- **Store data**: Object storage via [versitygw] (S3 gateway).
 - **Orchestrate**: Run data pipelines using [Prefect].
 - **Track**: Log machine learning experiments and models with [MLflow].
 - **Develop**: Interactively experiment in [Marimo] notebooks.
@@ -32,23 +32,23 @@ graph TD
         mlflow(MLflow Server):::app
 
         git[(Git Daemon)]:::infra
-        minio[(MinIO S3)]:::infra
+        versitygw[(Versity S3)]:::infra
         postgres[(PostgreSQL)]:::infra
 
         host -->|Code| git -->|Code| prefect_worker
         host -->|Web UI / CLI| prefect_server
         host -->|Web UI| mlflow
-        %%host -->|Web UI / CLI| minio
-        host <-->|Data| minio
+        %%host -->|Web UI / CLI| versitygw
+        host <-->|Data| versitygw
 
         prefect_server -.-|Backend| postgres
         prefect_server -->|Run| prefect_worker
 
         prefect_worker -->|API| mlflow
-        prefect_worker <-->|Data| minio
+        prefect_worker <-->|Data| versitygw
 
         mlflow -.-|Backend| postgres
-        mlflow -->|Artifacts| minio
+        mlflow -->|Artifacts| versitygw
     end
 ```
 
@@ -78,16 +78,16 @@ $ docker compose -f docker-compose/docker-compose.yaml up -d
 Once the containers are running, proceed with the configuration steps
 below.
 
-#### 2. MinIO Configuration
+#### 2. Versity Gateway Configuration
 
-To access MinIO from your host machine, export the following
-environment variables:
+To access S3 (Versity Gateway) from your host machine, export the
+following environment variables:
 
 ```bash
-export AWS_ACCESS_KEY_ID=minio
-export AWS_SECRET_ACCESS_KEY=minio123
+export AWS_ACCESS_KEY_ID=versitygw
+export AWS_SECRET_ACCESS_KEY=versitygw
 export AWS_REGION=us-east-1
-export AWS_ENDPOINT_URL=http://localhost:9000
+export AWS_ENDPOINT_URL=http://localhost:7070
 ```
 
 Next, create the necessary buckets using the [mc] client.
@@ -96,7 +96,7 @@ Next, create the necessary buckets using the [mc] client.
 - `data`: Put any data to share with Prefect workflows.
 
 ```console
-$ mc alias set local http://localhost:9000 minio minio123
+$ mc alias set local http://localhost:7070 versitygw versitygw
 
 $ mc mb local/{mlflow,data}
 ```
@@ -135,7 +135,7 @@ $ git push local main
 
 #### 1. Prepare the Data
 
-Generate [the Iris dataset] CSV and upload it to MinIO:
+Generate [the Iris dataset] CSV and upload it to S3:
 
 ```console
 $ uv run python scripts/prepare_iris_csv.py
@@ -174,8 +174,8 @@ $ prefect deployment run example/experiment
 
 [marimo]: https://marimo.io/
 [mc]: https://github.com/minio/mc
-[minio]: https://www.min.io/
 [mlflow]: https://mlflow.org/
 [prefect]: https://www.prefect.io/
 [the iris dataset]: https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_iris.html
 [uv]: https://docs.astral.sh/uv/
+[versitygw]: https://www.versity.com/products/versitygw/
