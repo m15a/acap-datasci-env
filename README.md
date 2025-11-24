@@ -128,7 +128,7 @@ $ docker compose -f docker-compose/docker-compose.yaml exec git \
     git init --bare /var/www/git/repo.git
 
 $ git remote add local git://localhost:9010/repo
-$ git push --set-upstream local main
+$ git push local main
 ```
 
 ### Run the Example Experiment
