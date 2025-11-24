@@ -1,8 +1,6 @@
 <!-- vim:set tw=72 nowrap spell: -->
 
-# acap-datasci-env
-
-"As-Cloud-As-Possible" Data Science Environment
+# "As Cloud-like as Possible" Data Science Environment
 
 ## Overview
 
