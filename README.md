@@ -62,8 +62,8 @@ with the core pipeline components.)
 In addition to Docker, having the following tools installed on your
 host machine is recommended for interaction with the services:
 
-- [uv]: For Python package and environment management.
-- [mc]: The MinIO Client for managing object storage buckets.
+- [uv]: For local Python package and environment management.
+- [mc]: S3 client for managing object storage buckets.
 
 ### Setup Instructions
 
