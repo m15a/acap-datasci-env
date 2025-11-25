@@ -2,6 +2,7 @@
 name = "acap-datasci-env"
 version = "0.1.0"
 description = "As-Cloud-as-Possible data science environment"
+readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "duckdb>=1.4.2",
