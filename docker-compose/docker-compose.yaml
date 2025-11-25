@@ -101,6 +101,11 @@ services:
     volumes:
       - ..:/work
     environment:
+      PREFECT_API_URL: http://prefect-server:4200/api
+      AWS_ENDPOINT_URL: http://versitygw:7070
+      AWS_ACCESS_KEY_ID: versitygw
+      AWS_SECRET_ACCESS_KEY: versitygw
+      AWS_DEFAULT_REGION: us-east-1
       LANG: C.UTF-8
     restart: always
 
