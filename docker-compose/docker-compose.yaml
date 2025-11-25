@@ -102,6 +102,7 @@ services:
       - ..:/work
     environment:
       LANG: C.UTF-8
+    restart: always
 
 volumes:
   git-data:
