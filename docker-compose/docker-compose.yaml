@@ -106,7 +106,7 @@ services:
       AWS_SECRET_ACCESS_KEY: versitygw
       AWS_DEFAULT_REGION: us-east-1
       LANG: C.UTF-8
-    restart: always
+    restart: on-failure
 
 volumes:
   git-data:
