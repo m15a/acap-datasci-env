@@ -52,7 +52,7 @@ services:
       AWS_SECRET_ACCESS_KEY: versitygw
       AWS_DEFAULT_REGION: us-east-1
     command: >
-      mlflow server --host 0.0.0.0
+      server --host 0.0.0.0
       --backend-store-uri postgresql://mlflow:mlflow@postgres:5432/mlflow
       --artifacts-destination s3://mlflow/artifacts
       --disable-security-middleware
