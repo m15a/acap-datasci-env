@@ -89,7 +89,7 @@ services:
       AWS_ACCESS_KEY_ID: versitygw
       AWS_SECRET_ACCESS_KEY: versitygw
       AWS_DEFAULT_REGION: us-east-1
-    command: prefect worker start --type process --pool sandbox
+    command: start --type process --pool sandbox
     restart: always
 
   marimo:
