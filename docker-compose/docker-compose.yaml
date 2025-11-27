@@ -99,6 +99,7 @@ services:
       - "2718:2718"
     volumes:
       - ..:/work
+      - marimo-data:/home/marimouser/.config/marimo
     environment:
       PREFECT_API_URL: http://prefect-server:4200/api
       AWS_ENDPOINT_URL: http://versitygw:7070
@@ -112,3 +113,4 @@ volumes:
   git-data:
   versitygw-data:
   postgres-data:
+  marimo-data:
