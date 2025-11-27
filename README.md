@@ -35,7 +35,7 @@ graph TD
 
         host -->|Code| git -->|Code| prefect_worker
         host -->|Web UI / CLI| prefect_server
-        host -->|Web UI| mlflow
+        host -->|Web UI / CLI| mlflow
         %%host -->|Web UI / CLI| versitygw
         host <-->|Data| versitygw
 
