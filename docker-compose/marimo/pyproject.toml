@@ -1,0 +1,15 @@
+[project]
+name = "acap-datasci-marimo-env"
+version = "0.1.0"
+dependencies = [
+    "duckdb==1.4.2",
+    "marimo[recommended,lsp]==0.18.1",
+    "mlflow==3.6.0",
+    "numpy==2.3.5",
+    "pandas[pyarrow]==2.3.3",
+    "prefect[aws]==3.6.4",
+    "s3fs==2025.10.0",
+    "scikit-learn==1.7.2",
+    "scipy==1.16.3",
+    "universal-pathlib==0.3.6",
+]
