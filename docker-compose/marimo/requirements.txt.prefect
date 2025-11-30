@@ -6,3 +6,4 @@ prefect[aws]==3.6.4
 s3fs==2025.10.0
 scikit-learn==1.7.2
 scipy==1.16.3
+universal-pathlib==0.3.6
