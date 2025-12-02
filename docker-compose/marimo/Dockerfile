@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
+FROM ghcr.io/astral-sh/uv:python3.13-trixie-slim
 RUN useradd -m appuser \
     && mkdir -p /app/work /app/venv /home/appuser/.config/marimo \
     && chown -R appuser:appuser /app /home/appuser
